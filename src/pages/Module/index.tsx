@@ -1,9 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,7 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Define the schema for form validation
 const formSchema = z.object({
   moduleNumber: z.number().min(0).max(5, {
     message: "Module number must be between 0 and 5.",
@@ -57,29 +55,19 @@ const ModuleSelectPage: React.FC = () => {
     null
   );
 
-  const onSubmit = async (data: any) => {
+  const navigate = useNavigate();
+
+  const onSubmit = async () => {
     try {
-      setError(null);
-      const response = await axios.post("/api/submit", data);
-      console.log("Form submitted successfully", response.data);
+      navigate(
+        `/experiment?module=${selectedModule}&experiment=${selectedExperiment}`
+      );
     } catch (error: any) {
-      setError(error.response?.data?.message || "Something went wrong."); // Handle error
+      setError(error.response?.data?.message || "Something went wrong.");
       console.error("Form submission failed", error);
     }
   };
 
-  const handleModuleChange = (value: string) => {
-    const moduleId = parseInt(value, 10);
-    setSelectedModule(moduleId);
-    setSelectedExperiment(null); // Reset experiment selection when module changes
-  };
-
-  const handleExperimentChange = (value: string) => {
-    const experimentId = parseInt(value, 10);
-    setSelectedExperiment(experimentId);
-  };
-
-  // Get experiments based on selected module
   const selectedModuleData = modules.find(
     (module) => module.id === selectedModule
   );
@@ -96,7 +84,6 @@ const ModuleSelectPage: React.FC = () => {
             Select a module and experiment to proceed.
           </p>
         </CardHeader>
-
         <CardContent>
           <Form {...form}>
             <form
@@ -106,13 +93,18 @@ const ModuleSelectPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="moduleNumber"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Select Module</FormLabel>
                     <FormControl>
                       <Select
-                        value={selectedModule?.toString() ?? ""}
-                        onValueChange={handleModuleChange}
+                        value={field.value?.toString() ?? ""}
+                        onValueChange={(value) => {
+                          const moduleId = parseInt(value, 10);
+                          setSelectedModule(moduleId);
+                          setSelectedExperiment(null);
+                          field.onChange(moduleId);
+                        }}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Module" />
@@ -137,13 +129,17 @@ const ModuleSelectPage: React.FC = () => {
                 <FormField
                   control={form.control}
                   name="experimentNumber"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Select Experiment</FormLabel>
                       <FormControl>
                         <Select
-                          value={selectedExperiment?.toString() ?? ""}
-                          onValueChange={handleExperimentChange}
+                          value={field.value?.toString() ?? ""}
+                          onValueChange={(value) => {
+                            const experimentId = parseInt(value, 10);
+                            setSelectedExperiment(experimentId);
+                            field.onChange(experimentId);
+                          }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Experiment" />

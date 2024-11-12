@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -50,8 +51,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center h-screen">
-      <Card className="w-[22rem] p-2">
+    <section className="flex flex-col items-center justify-center h-screen relative">
+      <Card className="w-[22rem] p-2 z-10">
         <CardHeader className="py-4">
           <h1 className="md:text-2xl text-xl font-bold">
             Welcome to the World of Technology
@@ -110,6 +111,7 @@ const LoginPage: React.FC = () => {
           Don't have an account? Please contact the admin.
         </CardFooter>
       </Card>
+      <BackgroundBeams />
     </section>
   );
 };
