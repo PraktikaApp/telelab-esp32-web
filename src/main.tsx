@@ -5,6 +5,7 @@ import { ModeToggle } from "./components/ui/mode-toogle";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./helpers/route/routes";
 import { ThemeProvider } from "./components/ui/theme-provider";
+import { Toaster } from "./components/ui/toaster";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       >
         <p>© {new Date().getFullYear()} PraktikaApp. </p>
         <p>Built with shadcn/ui + Aceternity UI</p>
+        <Toaster />
       </div>
     </ThemeProvider>
   </React.StrictMode>

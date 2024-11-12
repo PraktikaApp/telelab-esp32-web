@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { BackgroundBeams } from "@/components/ui/background-beams";
+import { useToast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,7 @@ const formSchema = z.object({
 });
 
 const LoginPage: React.FC = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const API_URL: string = import.meta.env.VITE_PUBLIC_API_URL;
   const form = useForm({
@@ -56,8 +58,12 @@ const LoginPage: React.FC = () => {
       const response = await axios.post(`${API_URL}/auth/login`, data);
       localStorage.setItem("token", response.data.data);
       navigate("/module");
-    } catch (error: any) {
-      console.error("Login failed", error);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
+      });
     }
   };
 

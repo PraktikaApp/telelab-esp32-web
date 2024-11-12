@@ -8,12 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  CardContent,
-  Card,
-  CardHeader,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const TruthTable: React.FC = () => {
@@ -88,7 +83,9 @@ const TruthTable: React.FC = () => {
 
   return (
     <div className="p-4 py-20">
-      <h1 className="text-lg font-bold mb-4 text-center">Truth Table</h1>
+      <h1 className="font-bold mb-4 text-center md:text-3xl text-xl">
+        Truth Table
+      </h1>
       <Card className="max-w-lg p-0 mx-auto">
         <Table>
           <TableHeader>

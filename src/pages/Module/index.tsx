@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 import {
   Form,
   FormControl,
@@ -74,8 +75,8 @@ const ModuleSelectPage: React.FC = () => {
   const experiments = selectedModuleData ? selectedModuleData.experiments : [];
 
   return (
-    <section className="flex flex-col items-center justify-center h-screen">
-      <Card className="w-[22rem] p-2">
+    <section className="flex flex-col items-center justify-center h-screen relative">
+      <Card className="w-[22rem] p-2 z-10">
         <CardHeader className="py-4">
           <h1 className="md:text-2xl text-xl font-bold">
             Welcome to the World of Technology
@@ -172,6 +173,7 @@ const ModuleSelectPage: React.FC = () => {
           Need help? Please contact the admin.
         </CardFooter>
       </Card>
+      <BackgroundBeams />
     </section>
   );
 };
