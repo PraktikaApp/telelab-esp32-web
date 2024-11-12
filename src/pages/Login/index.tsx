@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  email: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   password: z.string().min(8, {
@@ -32,6 +32,7 @@ const formSchema = z.object({
 });
 
 const LoginPage: React.FC = () => {
+  const API_URL: string = import.meta.env.VITE_PUBLIC_API_URL;
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
@@ -40,10 +41,17 @@ const LoginPage: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      setError(null); // Reset error on each submit
-      const response = await axios.post("/api/login", data); // API endpoint
+      setError(null);
+
+      console.log("API_URL", API_URL);
+      data = {
+        email: data.email + "@student.its.ac.id",
+        password: data.password,
+        password_confirmation: data.password,
+      };
+      console.log("Logging in with", data);
+      const response = await axios.post(`${API_URL}/auth/login`, data);
       console.log("Login successful", response.data);
-      // Redirect or handle success (You can redirect the user to another page here)
     } catch (error: any) {
       setError(error.response?.data?.message || "Something went wrong."); // Handle error
       console.error("Login failed", error);
@@ -70,7 +78,7 @@ const LoginPage: React.FC = () => {
             >
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Student ID</FormLabel>
