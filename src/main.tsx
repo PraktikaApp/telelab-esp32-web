@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ModeToggle />
       </div>
       <div
-        className="fixed bottom-10 flex w-full flex-col items-center gap-3 text-sm
+        className="fixed md:bottom-10 bottom-0 flex w-full flex-col items-center gap-3 text-sm bg-gray-100 pt-2 dark:bg-gray-800 md:bg-transparent md:dark:bg-transparent  
           text-muted-foreground sm:flex-row sm:justify-end sm:pr-10"
       >
         <p>© {new Date().getFullYear()} PraktikaApp. </p>

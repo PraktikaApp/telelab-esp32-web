@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,28 +33,30 @@ const formSchema = z.object({
 });
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const API_URL: string = import.meta.env.VITE_PUBLIC_API_URL;
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
 
-  const [error, setError] = React.useState<string | null>(null); // Error state
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/module");
+    }
+  }, [navigate]);
 
   const onSubmit = async (data: any) => {
     try {
-      setError(null);
-
-      console.log("API_URL", API_URL);
       data = {
         email: data.email + "@student.its.ac.id",
         password: data.password,
         password_confirmation: data.password,
       };
-      console.log("Logging in with", data);
       const response = await axios.post(`${API_URL}/auth/login`, data);
-      console.log("Login successful", response.data);
+      localStorage.setItem("token", response.data.data);
+      navigate("/module");
     } catch (error: any) {
-      setError(error.response?.data?.message || "Something went wrong."); // Handle error
       console.error("Login failed", error);
     }
   };
@@ -106,9 +109,6 @@ const LoginPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-              {error && (
-                <div className="text-red-500 text-sm">{error}</div> // Display error message
-              )}
               <Button type="submit" className="w-full">
                 Login
               </Button>
