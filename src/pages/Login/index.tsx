@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +25,11 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   credentials: z.string().min(2, {
-    message: "Credentials must be at least 10 characters.",
+    message: "Credentials must be at least 2 characters.",
   }),
 });
 
 const LoginPage: React.FC = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
   const API_URL: string = import.meta.env.VITE_PUBLIC_API_URL;
   const form = useForm({
@@ -46,16 +45,27 @@ const LoginPage: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      data = {
+      const response = await axios.post(`${API_URL}auth/authenticate`, {
         credentials: data.credentials,
-      };
-      const response = await axios.post(`${API_URL}/telelab/enter`, data);
-      localStorage.setItem("credentials", response.data.credentials);
-      localStorage.setItem("module", response.data.module.number);
+      });
+
+      await axios.post("/set_module", {
+        config: {
+          module: response.data.module,
+        },
+      });
+
       localStorage.setItem(
-        "number_of_experiment",
-        response.data.module.number_of_experiment
+        "credentials",
+        JSON.stringify(response.data.credentials)
       );
+
+      toast({
+        variant: "default",
+        title: "Login Successful",
+        description: "You have successfully logged in.",
+      });
+
       navigate("/module");
     } catch (error) {
       toast({
@@ -86,10 +96,10 @@ const LoginPage: React.FC = () => {
             >
               <FormField
                 control={form.control}
-                name="email"
+                name="credentials"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Praticum Credentials</FormLabel>
+                    <FormLabel>Practicum Credentials</FormLabel>
                     <FormControl>
                       <Input placeholder="di4darpp84" {...field} />
                     </FormControl>
