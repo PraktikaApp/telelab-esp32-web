@@ -27,7 +27,7 @@ export default function ModulePage() {
     const fetchModuleData = async () => {
       if (id) {
         try {
-          const response = await axios.get(`${API_URL}experiments/${id}`);
+          const response = await axios.get(`${API_URL}module/${id}`);
           const { data } = response.data;
           setModuleData(data);
           setLoading(false);
@@ -44,7 +44,7 @@ export default function ModulePage() {
   }, [id]);
 
   const handleExperienceClick = (experimentId: number) => {
-    navigate(`/experiment?experiment=${experimentId}`);
+    navigate(`/experiment/${experimentId}`);
   };
 
   if (loading) {
