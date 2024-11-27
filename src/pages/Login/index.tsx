@@ -49,15 +49,23 @@ const LoginPage: React.FC = () => {
         credentials: data.credentials,
       });
 
-      await axios.post("/set_module", {
-        config: {
-          module: response.data.module,
-        },
-      });
+      await axios.post(
+        "/set_module",
+        new URLSearchParams({
+          config: JSON.stringify({
+            num_module: response.data.data.module_num,
+          }),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
 
       localStorage.setItem(
         "credentials",
-        JSON.stringify(response.data.credentials)
+        JSON.stringify(response.data.data.credentials)
       );
 
       toast({
@@ -66,7 +74,7 @@ const LoginPage: React.FC = () => {
         description: "You have successfully logged in.",
       });
 
-      navigate("/module");
+      navigate(`/module/${response.data.data.module_num}`);
     } catch (error) {
       toast({
         variant: "destructive",
