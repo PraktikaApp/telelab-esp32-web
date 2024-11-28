@@ -32,12 +32,10 @@ export default function ModulePage() {
           setModuleData(data);
           setLoading(false);
         } catch (error) {
-          console.error("Failed to fetch module data:", error);
           setLoading(false);
         }
       }
     };
-
     if (id) {
       fetchModuleData();
     }
@@ -56,7 +54,7 @@ export default function ModulePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center min-h-screen md:h-screen overflow-y-auto mb-10 md:mb-0">
+    <div className="flex flex-col items-center md:justify-center text-center min-h-screen md:h-screen overflow-y-auto mb-10 md:mb-0">
       <h1 className="text-3xl font-semibold md:text-5xl">{moduleData.name}</h1>
       <p className="text-xl text-muted-foreground md:text-2xl">
         Module {moduleData.id}

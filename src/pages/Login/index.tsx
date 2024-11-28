@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,6 +21,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { postWithParams } from "@/lib/pos2esp";
 
 const formSchema = z.object({
   credentials: z.string().min(2, {
@@ -38,54 +38,53 @@ const LoginPage: React.FC = () => {
 
   React.useEffect(() => {
     const credentials = localStorage.getItem("credentials");
+    const module_num = localStorage.getItem("module_num");
     if (credentials) {
-      navigate("/module");
+      navigate(`/module/${module_num}`);
     }
   }, [navigate]);
 
+  const saveToLocalStorage = (key: string, value: any) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  };
+
+  const showToast = (
+    variant: "default" | "destructive",
+    title: string,
+    description: string
+  ) => {
+    toast({ variant, title, description });
+  };
+
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post(`${API_URL}auth/authenticate`, {
-        credentials: data.credentials,
-      });
-
-      await axios.post(
-        "/set_module",
-        new URLSearchParams({
-          config: JSON.stringify({
-            num_module: response.data.data.module_num,
-          }),
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
+      const { data: authResponse } = await axios.post(
+        `${API_URL}auth/authenticate`,
+        data
       );
+      console.log(data);
+      const { module_num, credentials } = authResponse.data;
+      await postWithParams("/set_module", {
+        num_module: module_num,
+      });
+      saveToLocalStorage("credentials", credentials);
+      saveToLocalStorage("module_num", module_num);
 
-      localStorage.setItem(
-        "credentials",
-        JSON.stringify(response.data.data.credentials)
+      showToast(
+        "default",
+        "Login Successful",
+        "You have successfully logged in."
       );
-
-      toast({
-        variant: "default",
-        title: "Login Successful",
-        description: "You have successfully logged in.",
-      });
-
-      navigate(`/module/${response.data.data.module_num}`);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Credentials",
-        description: "Please check your credentials and try again.",
-      });
+      navigate(`/module/${module_num}`);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      showToast("destructive", "Invalid Credentials", errorMessage);
     }
   };
 
   return (
-    <section className="flex flex-col items-center justify-center h-screen relative">
+    <section className="flex flex-col items-center md:justify-center md:mt-0 mt-16  md:min-h-screen relative">
       <Card className="w-[22rem] p-2 z-10">
         <CardHeader className="py-4">
           <h1 className="md:text-2xl text-xl font-bold">
@@ -117,6 +116,14 @@ const LoginPage: React.FC = () => {
               />
               <Button type="submit" className="w-full">
                 Continue
+              </Button>
+              <Button
+                type="button"
+                className="w-full"
+                variant="destructive"
+                onClick={() => navigate("/test")}
+              >
+                Test Module
               </Button>
             </form>
           </Form>

@@ -1,5 +1,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import { Layout } from "@/components/layout/layout";
+import { ProtectedLayout } from "@/components/layout/protected-layout";
 
 const LoginPage = lazy(() => import("@/pages/Login"));
 const ModuleSelectPage = lazy(() => import("@/pages/Module"));
@@ -13,7 +15,9 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <Suspense fallback={<Loading />}>
-        <LoginPage />
+        <Layout>
+          <LoginPage />
+        </Layout>
       </Suspense>
     ),
   },
@@ -21,7 +25,11 @@ export const router = createBrowserRouter([
     path: "/module/:id",
     element: (
       <Suspense fallback={<Loading />}>
-        <ModuleSelectPage />
+        <ProtectedLayout>
+          <Layout>
+            <ModuleSelectPage />
+          </Layout>
+        </ProtectedLayout>
       </Suspense>
     ),
   },
@@ -29,7 +37,11 @@ export const router = createBrowserRouter([
     path: "/experiment/:id",
     element: (
       <Suspense fallback={<Loading />}>
-        <ExperimentPage />
+        <ProtectedLayout>
+          <Layout>
+            <ExperimentPage />
+          </Layout>
+        </ProtectedLayout>
       </Suspense>
     ),
   },
@@ -37,7 +49,9 @@ export const router = createBrowserRouter([
     path: "/test",
     element: (
       <Suspense fallback={<Loading />}>
-        <TestPage />
+        <Layout>
+          <TestPage />
+        </Layout>
       </Suspense>
     ),
   },
